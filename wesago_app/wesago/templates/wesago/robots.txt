@@ -1,0 +1,15 @@
+# Forbid crawlers from indexing parts of site
+User-agent: *
+Disallow: {% url 'wesago:index' %}api/
+Disallow: {% url 'wesago:index' %}activation/
+Disallow: {% url 'wesago:blank-avatar' %}
+Disallow: {% url 'wesago:banned' %}
+Disallow: {% url 'wesago:forgotten-password' %}
+Disallow: {% url 'wesago:login' %}
+Disallow: {% url 'wesago:options' %}
+Disallow: {% url 'wesago:index' %}p/
+Disallow: {% url 'wesago:private-threads' %}
+Disallow: {% url 'wesago:notifications' %}
+Disallow: {% url 'wesago:request-activation' %}
+Disallow: {% url 'wesago:search' %}
+Disallow: {% url 'wesago:index' %}u/

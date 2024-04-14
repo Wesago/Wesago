@@ -1,0 +1,4 @@
+# wesago==0.39.0
+django-anymail
+sentry-sdk
+uwsgi

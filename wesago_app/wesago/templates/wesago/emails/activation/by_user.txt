@@ -1,0 +1,10 @@
+{% extends "wesago/emails/base.txt" %}
+{% load i18n wesago_absoluteurl %}
+
+
+{% block content %}
+{% blocktrans trimmed with user=user context "account activation email" %}
+{{ user }}, to activate your account click the below link:
+{% endblocktrans %}
+{% absoluteurl 'wesago:activate-by-token' pk=user.pk token=activation_token %}
+{% endblock content %}
