@@ -1,0 +1,82 @@
+version: '3.0'
+services:
+
+  postgres-15:
+    image: postgres:15
+    restart: unless-stopped
+    networks:
+      - wesago
+    environment:
+      - POSTGRES_DB=${WESAGO_POSTGRES_DB}
+      - POSTGRES_USER=${WESAGO_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${WESAGO_POSTGRES_PASSWORD}
+    env_file:
+      - .env
+    volumes:
+      - wesago-postgres-15:/var/lib/postgresql/data
+
+  redis-6:
+    image: redis:6
+    restart: unless-stopped
+    networks:
+      - wesago
+    volumes:
+      - wesago-redis-6:/data
+
+  wesago:
+    build: .
+    restart: unless-stopped
+    networks:
+      wesago:
+        aliases:
+          - wesago
+    environment:
+      - POSTGRES_HOST=${WESAGO_POSTGRES_HOST}
+      - POSTGRES_DB=${WESAGO_POSTGRES_DB}
+      - POSTGRES_USER=${WESAGO_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${WESAGO_POSTGRES_PASSWORD}
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres-15
+      - redis-6
+    volumes:
+      - ./media:/wesago_app/media:z
+      - ./static:/wesago_app/static:z
+      - ./avatargallery:/wesago_app/avatargallery:ro
+      - ./theme:/wesago_app/theme:ro
+      - ./backups:/wesago/backups:Z
+      - ./logs:/wesago/logs:z
+
+  celery-worker:
+    build: .
+    command: celery -A wesagodocker worker --loglevel=info
+    restart: unless-stopped
+    networks:
+      wesago:
+        aliases:
+          - wesago
+    environment:
+      - POSTGRES_HOST=${WESAGO_POSTGRES_HOST}
+      - POSTGRES_DB=${WESAGO_POSTGRES_DB}
+      - POSTGRES_USER=${WESAGO_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${WESAGO_POSTGRES_PASSWORD}
+    env_file:
+      - .env
+    depends_on:
+      - postgres-15
+      - redis-6
+    volumes:
+      - ./media:/wesago_app/media:z
+      - ./static:/wesago_app/static:z
+      - ./theme:/wesago_app/theme:ro
+      - ./logs:/wesago/logs:z
+
+networks:
+  wesago:
+
+volumes:
+  wesago-postgres-15:
+  wesago-redis-6:
