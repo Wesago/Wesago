@@ -7,20 +7,34 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: nginx
+      app: nginx-website
   template:
     metadata:
       labels:
-        app: nginx
+        app: nginx-website
     spec:
       automountServiceAccountToken: false
       containers:
         - name: nginx-website
           image: registry.deti/gic-wesago/nginxstatic:v1
           volumeMounts:
+            # static files for website
             - name: static-files
-              mountPath: /usr/share/nginx/html
+              mountPath: /var/www/static
+            # nginx config
+            - name: nginx-website-conf
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+              readOnly: true
       volumes:
+        # static files for website
         - name: static-files
           persistentVolumeClaim:
             claimName: react-pvc
+        # nginx config
+        - name: nginx-website-conf
+          configMap:
+            name: nginx-website-conf
+            items:
+               - key: nginx.conf
+                 path: nginx.conf

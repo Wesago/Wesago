@@ -1,9 +1,9 @@
-kubectl apply -f ingress.yaml
-
 cd react
 bash run.sh
-cd ../nginx
+cd ..
 
 cd nginx
 bash run.sh
-cd ../
+cd ..
+
+kubectl apply -f ingress.yaml

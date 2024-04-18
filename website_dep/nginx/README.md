@@ -4,5 +4,5 @@
 - [x] Service
 - [x] Deployment
 - [] Volume (uses the one from React)
-- [] ConfigMap
+- [x] ConfigMap
 - [] Secrets

@@ -1,8 +1,13 @@
-# Use an official Nginx runtime as the base image
-FROM nginx:alpine
+# Use Alpine Linux as base image
+FROM alpine:3.12
 
-# Copy the static files of the React app into the Nginx document root
-COPY ../../website/build/ /usr/share/nginx/html
+# Update package repository and install nginx
+RUN apk update && \
+    RUN apk add --no-cache nginx
 
-# Expose the port Nginx will listen on
+# Expose port 80
 EXPOSE 80
+
+# Command to start Nginx when container starts
+CMD ["nginx", "-g", "daemon off;"]
+
