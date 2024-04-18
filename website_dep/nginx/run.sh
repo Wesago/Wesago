@@ -1,4 +1,5 @@
-docker build -t  registry.deti/gic-wesago/nginxstatic:v1 .
+# setup
+docker build -t registry.deti/gic-wesago/nginxstatic:v1 .
 docker push registry.deti/gic-wesago/nginxstatic:v1
 
 # configmap
