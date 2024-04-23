@@ -1,0 +1,33 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: website-job
+  namespace: gic-wesago
+spec:
+  ttlSecondsAfterFinished: 100
+  activeDeadlineSeconds: 600
+
+  template:
+    spec:
+      volumes:
+        - name: static-files
+          persistentVolumeClaim:
+            claimName: react-pvc
+      containers:
+        - name: website-job
+          image: registry.deti/gic-wesago/websitejob:v1
+          command: ["/bin/sh"]
+          args: 
+            - "-c"
+            - |
+              git clone https://github.com/Wesago/wesago-website.git /project &&
+              cd /project &&
+              pnpm install &&
+              pnpm build &&
+              cp -r build/* /var/www/static/
+          imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: "/var/www/static"
+              name: static-files
+      restartPolicy: OnFailure
+  backoffLimit: 10

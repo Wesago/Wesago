@@ -1,6 +1,6 @@
 # setup
-docker build -t registry.deti/gic-wesago/nginxstatic:v1 .
-docker push registry.deti/gic-wesago/nginxstatic:v1
+sudo docker build -t registry.deti/gic-wesago/nginxstatic:v1 .
+sudo docker push registry.deti/gic-wesago/nginxstatic:v1
 
 # configmap
 kubectl delete configmap nginx-website-conf --namespace=gic-wesago

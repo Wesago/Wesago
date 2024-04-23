@@ -1,10 +1,8 @@
 # setup
-cd ../../website
-npm i
-npm run build
-cd ../website_dep/react
+sudo docker build -t registry.deti/gic-wesago/websitejob:v1 .
+sudo docker push registry.deti/gic-wesago/websitejob:v1
 
 # pvc
 kubectl apply -f pvc.yaml
-# copy folder to pvc
-kubectl cp ../../website/build/ gic-wesago/nginx-website:/var/www/static
+# job
+kubectl apply -f job.yaml
