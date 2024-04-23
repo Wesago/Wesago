@@ -16,7 +16,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: nginx-website
-          image: registry.deti/gic-wesago/nginxstatic:v1
+          image: registry.deti/gic-wesago/nginxwebsite:v1
           volumeMounts:
             # static files for website
             - name: static-files
