@@ -1,8 +1,8 @@
-cd nginx
+cd react
 bash run.sh
 cd ..
 
-cd react
+cd nginx
 bash run.sh
 cd ..
 

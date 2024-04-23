@@ -20,14 +20,11 @@ spec:
           args: 
             - "-c"
             - |
-              git clone https://github.com/Wesago/wesago-website.git /project &&
               cd /project &&
-              pnpm install &&
-              pnpm build &&
               cp -r build/* /var/www/static/
           imagePullPolicy: Always
           volumeMounts:
             - mountPath: "/var/www/static"
               name: static-files
       restartPolicy: OnFailure
-  backoffLimit: 10
+  backoffLimit: 3
