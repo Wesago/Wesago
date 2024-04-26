@@ -1,0 +1,49 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: wesago-collectstatic
+  namespace: gic-wesago
+spec:
+  ttlSecondsAfterFinished: 100
+  activeDeadlineSeconds: 100
+
+  template:
+    spec:
+      containers:
+        - name: collectstatic-container
+          image: registry.deti/gic-wesago/wesago-django:v1
+          command: ['python', 'manage.py', 'collectstatic', '--noinput']
+          imagePullPolicy: Always
+          envFrom:
+          - configMapRef:
+              name: wesago-cm
+          - secretRef:
+              name: wesago-secret
+          ports:
+            - containerPort: 8000
+          volumeMounts:
+            - mountPath: "/app/static"
+              name: static
+            - mountPath: "/app/media"
+              name: media
+            - mountPath: "/app/avatargallery"
+              name: avatargallery
+            - mountPath: "/app/theme"
+              name: theme
+              
+      volumes:
+        - name: static
+          persistentVolumeClaim:
+            claimName: wesago-static-pvc
+        - name: media
+          persistentVolumeClaim:
+            claimName: wesago-media-pvc
+        - name: avatargallery
+          persistentVolumeClaim:
+            claimName: wesago-avatargallery-pvc
+        - name: theme
+          persistentVolumeClaim:
+            claimName: wesago-theme-pvc
+
+      restartPolicy: OnFailure
+  backoffLimit: 3

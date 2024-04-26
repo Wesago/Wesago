@@ -34,7 +34,7 @@ spec:
             for i in $loop
             do
                 echo "finding master at $i"
-                MASTER=$(redis-cli --no-auth-warning --raw -h $i -a $REDIS_PASSWORD info replication | awk '{print $1}' | grep master_host: | cut -d ":" -f2)
+                MASTER=$(redis-cli --no-auth-warning --raw -h $i info replication | awk '{print $1}' | grep master_host: | cut -d ":" -f2)
                 if [ "$MASTER" = "" ]; then
                     echo "no master found"
                     MASTER=
@@ -44,14 +44,14 @@ spec:
                 fi
             done
             echo "sentinel monitor mymaster $MASTER 6379 2" >> /tmp/master
-            echo "port 5000
+            echo "port 26379
             sentinel resolve-hostnames yes
             sentinel announce-hostnames yes
             $(cat /tmp/master)
-            sentinel down-after-milliseconds mymaster 5000
+            sentinel down-after-milliseconds mymaster 26379
             sentinel failover-timeout mymaster 60000
             sentinel parallel-syncs mymaster 1
-            sentinel auth-pass mymaster $REDIS_PASSWORD
+            # sentinel auth-pass mymaster $REDIS_PASSWORD
             " > /etc/redis/sentinel.conf
             cat /etc/redis/sentinel.conf
         volumeMounts:
@@ -63,7 +63,7 @@ spec:
         command: ["redis-sentinel"]
         args: ["/etc/redis/sentinel.conf"]
         ports:
-        - containerPort: 5000
+        - containerPort: 26379
           name: sentinel
         volumeMounts:
         - name: redis-config

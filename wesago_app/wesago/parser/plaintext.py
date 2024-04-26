@@ -36,7 +36,7 @@ def render_ast_to_plaintext(
         PlainTextFormat.META_DESCRIPTION,
         PlainTextFormat.SEARCH_DOCUMENT,
     ):
-        return re.sub("\s\s+", " ", text)
+        return re.sub(r"\s\s+", " ", text)
 
     return text
 

@@ -51,7 +51,6 @@ ALLOWED_HOSTS = ["*"]
 
 DATABASES = {
     'default': {
-        # Wesago requires PostgreSQL to run
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.environ.get('POSTGRES_DB'),
         'USER': os.environ.get('POSTGRES_USER'),
@@ -126,13 +125,19 @@ MEDIA_URL = '/media/'
 # The absolute path to the directory where collectstatic will collect static files for deployment.
 # https://docs.djangoproject.com/en/1.11/ref/settings/#static-root
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+if os.environ.get("STATIC_ROOT"):
+    STATIC_ROOT = os.environ.get("STATIC_ROOT")
+else:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # https://docs.djangoproject.com/en/1.11/ref/settings/#media-root
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+if os.environ.get("MEDIA_ROOT"):
+    MEDIA_ROOT = os.environ.get("MEDIA_ROOT")
+else:
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # This setting defines the additional locations the staticfiles app will traverse if the FileSystemFinder finder

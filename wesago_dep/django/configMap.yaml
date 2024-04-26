@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wesago-cm
+  namespace: gic-wesago
+  labels:
+    app: wesago-django
+data:
+  # General
+  WESAGO_DEBUG: "yes"
+  VIRTUAL_HOST: "*"
+  WESAGO_LANGUAGE_CODE: "en-us"
+  WESAGO_TIME_ZONE: "UTC"
+  WESAGO_DAILY_BACKUP: "no"
+
+  # Static files
+  STATIC_ROOT: "/app/static"
+  MEDIA_ROOT: "/app/media"
+  
+  # Email
+  WESAGO_EMAIL_PROVIDER: "console"
+  WESAGO_DEFAULT_FROM_EMAIL: ""
+
+  # Others
+  WESAGO_PLUGINS: ""
+  WESAGO_SEARCH_CONFIG: "simple"
+  WESAGO_INDEX: "threads"
