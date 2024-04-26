@@ -65,11 +65,36 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 # Caching
 # https://docs.djangoproject.com/en/1.11/topics/cache/#setting-up-the-cache
 
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django.core.cache.backends.redis.RedisCache",
+#         "LOCATION": os.environ.get('CACHE_REDIS_URL', "redis://redis-6/1"),
+#     }
+# }
+
+
+DJANGO_REDIS_CONNECTION_FACTORY = 'django_redis.pool.SentinelConnectionFactory'
+SENTINELS = []
+
+num_sentinels = int(os.environ.get('CACHE_REDIS_TOTAL_SENTINELS', 3))
+for i in range(num_sentinels):
+    SENTINELS.append((os.environ.get(f'CACHE_REDIS_SENTINEL_HOST_{i}'), int(os.environ.get('CACHE_REDIS_SENTINEL_PORT'))))
+
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": os.environ.get('CACHE_REDIS_URL', "redis://redis-6/1"),
-    }
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": os.environ.get('CACHE_REDIS_MASTER_HOST'),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.SentinelClient",
+            "SENTINELS": SENTINELS,
+            "SENTINEL_KWARGS": {
+                "socket_timeout": 5,
+            },
+            "CONNECTION_POOL_CLASS": "redis.sentinel.SentinelConnectionPool",
+            "SOCKET_CONNECT_TIMEOUT": 5,
+            "SOCKET_TIMEOUT": 5,
+        },
+    },
 }
 
 
