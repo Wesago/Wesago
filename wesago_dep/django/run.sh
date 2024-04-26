@@ -13,15 +13,15 @@ function apply {
 
     echo "migration-job.yaml"
     kubectl apply -f migration-job.yaml
-    sleep 120
+    kubectl wait --for=condition=Complete -n gic-wesago --timeout=200s job/wesago-db-migrations
 
     echo "collectstatic-job.yaml"
     kubectl apply -f collectstatic-job.yaml
-    sleep 120
+    kubectl wait --for=condition=Complete -n gic-wesago --timeout=200s job/wesago-collectstatic
 
     echo "createsuperuser-job.yaml"
     kubectl apply -f createsuperuser-job.yaml
-    sleep 120
+    kubectl wait --for=condition=Complete -n gic-wesago --timeout=200s job/wesago-createsuperuser
 
     echo "deployment.yaml"
     kubectl apply -f deployment.yaml
