@@ -1,0 +1,5 @@
+FROM postgres:alpine3.19
+
+EXPOSE 5432
+
+CMD ["postgres"]
