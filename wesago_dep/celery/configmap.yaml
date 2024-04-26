@@ -7,7 +7,7 @@ metadata:
     app: wesago-django
 data:
   # General
-  WESAGO_DEBUG: "yes"
+  WESAGO_DEBUG: "no"
   VIRTUAL_HOST: "*"
   WESAGO_LANGUAGE_CODE: "en-us"
   WESAGO_TIME_ZONE: "UTC"

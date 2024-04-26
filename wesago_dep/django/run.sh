@@ -9,15 +9,19 @@ function apply {
     kubectl apply -f secret.yaml
 
     echo "configMap.yaml"
-    kubectl apply -f configMap.yaml
+    kubectl apply -f configmap.yaml
 
     echo "migration-job.yaml"
     kubectl apply -f migration-job.yaml
-    sleep 30
+    sleep 120
 
     echo "collectstatic-job.yaml"
     kubectl apply -f collectstatic-job.yaml
-    sleep 30
+    sleep 120
+
+    echo "createsuperuser-job.yaml"
+    kubectl apply -f createsuperuser-job.yaml
+    sleep 120
 
     echo "deployment.yaml"
     kubectl apply -f deployment.yaml

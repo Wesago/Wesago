@@ -1,6 +1,6 @@
 #!/bin/bash
 
-declare -a arr=("react" "nginx")
+declare -a arr=("redis" "postgres" "django" "celery" "nginx")
 
 function apply {
 
@@ -26,11 +26,9 @@ function delete {
 }
 
 if [ "$1" == "apply" ]; then
-   apply
-   kubectl apply -f ingress.yaml
+    apply
 elif [ "$1" == "delete" ]; then
-   delete
-   kubectl delete -f ingress.yaml
+    delete
 else
-   echo "Invalid argument. Please provide 'apply' or 'delete'."
+    echo "Invalid argument. Please provide 'apply' or 'delete'."
 fi

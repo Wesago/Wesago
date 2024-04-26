@@ -1,14 +1,10 @@
 #!/bin/bash
 
 function apply {
-    echo "secret.yaml"
-    kubectl apply -f secret.yaml
 
-    echo "configMap.yaml"
     kubectl apply -f configmap.yaml
-
-    echo "deployment.yaml"
-    kubectl apply -f deployment.yaml
+    kubectl apply -f statefulset.yaml
+    kubectl apply -f service.yaml
 
 }
 

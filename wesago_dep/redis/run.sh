@@ -1,12 +1,38 @@
-kubectl apply -f redis-secret.yaml
+#!/bin/bash
 
-kubectl apply -f redis/configmap.yaml
-kubectl apply -f redis/statefulset.yaml
-kubectl apply -f redis/service.yaml
+declare -a arr=("redis" "sentinel")
 
-kubectl wait -n gic-wesago --for=condition=Ready pod/redis-0 --timeout=300s
-kubectl wait -n gic-wesago --for=condition=Ready pod/redis-1 --timeout=300s
-kubectl wait -n gic-wesago --for=condition=Ready pod/redis-2 --timeout=300s
+function apply {
 
-kubectl apply -f sentinel/statefulset.yaml
-kubectl apply -f sentinel/service.yaml
+    kubectl apply -f redis-secret.yaml
+
+    for i in "${arr[@]}"
+    do
+        echo "Running $i"
+        cd $i
+        bash run.sh apply
+        cd ..
+    done
+
+}
+
+function delete {
+
+    for i in "${arr[@]}"
+    do
+        echo "Running $i"
+        cd $i
+        bash run.sh delete
+        cd ..
+    done
+    
+    kubectl delete -f .
+}
+
+if [ "$1" == "apply" ]; then
+    apply
+elif [ "$1" == "delete" ]; then
+    delete
+else
+    echo "Invalid argument. Please provide 'apply' or 'delete'."
+fi
