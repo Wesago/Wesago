@@ -1,8 +1,8 @@
 NAMESPACE="gic-wesago"
 
 # website_dep nginx
-docker build -t registry.deti/${NAMESPACE}/nginx:v1 -f website_dep/nginx/Dockerfile website_dep/nginx
-docker push registry.deti/${NAMESPACE}/nginx:v1
+docker build -t registry.deti/${NAMESPACE}/nginxwebsite:v1 -f website_dep/nginx/Dockerfile website_dep/nginx
+docker push registry.deti/${NAMESPACE}/nginxwebsite:v1
 
 # website_dep react
 docker build -t registry.deti/${NAMESPACE}/websitejob:v1 -f website_dep/react/Dockerfile website_dep/react
