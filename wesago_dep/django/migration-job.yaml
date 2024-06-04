@@ -21,5 +21,13 @@ spec:
               name: wesago-cm
           - secretRef:
               name: wesago-secret
+          volumeMounts:
+            - mountPath: "/var/log/rsyslog"
+              name: rsyslog-logs
+      volumes:
+        - name: rsyslog-logs
+          persistentVolumeClaim:
+            claimName: rsyslog-django-pvc
+
       restartPolicy: OnFailure
   backoffLimit: 15

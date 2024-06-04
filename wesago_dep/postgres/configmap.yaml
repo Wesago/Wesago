@@ -35,6 +35,9 @@ data:
     log_timezone = 'Etc/UTC'
     datestyle = 'iso, mdy'
     timezone = 'Etc/UTC'
+    logging_collector = true
+    log_directory = '/var/log/rsyslog'
+    log_line_prefix = ' '
 
     #locale settings
     lc_messages = 'en_US.utf8'			# locale for system error message

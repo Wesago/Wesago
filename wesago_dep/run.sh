@@ -1,6 +1,6 @@
 #!/bin/bash
 
-declare -a arr=("redis" "postgres" "django" "celery" "nginx")
+declare -a arr=("rsyslog" "redis" "postgres" "django" "celery" "nginx")
 
 function apply {
 

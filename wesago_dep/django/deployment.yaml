@@ -26,13 +26,11 @@ spec:
           limits:
             memory: "128Mi"
             cpu: "500m"
-
         envFrom:
         - configMapRef:
             name: wesago-cm
         - secretRef:
             name: wesago-secret
-
         volumeMounts:
         - name: media
           mountPath: /app/media
@@ -42,6 +40,24 @@ spec:
           mountPath: /app/avatargallery
         - name: theme
           mountPath: /app/theme
+        - name: rsyslog-logs
+          mountPath: /var/log/rsyslog
+
+      - name: rsyslog
+        image: registry.deti/gic-wesago/rsyslog-server:v1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 514
+          protocol: UDP
+        - containerPort: 514
+          protocol: TCP
+        resources: {}
+        volumeMounts:
+        - name: rsyslog-config
+          mountPath: /etc/rsyslog.conf
+          subPath: rsyslog.conf
+        - name: rsyslog-logs
+          mountPath: /var/log/rsyslog
 
       volumes:
       - name: media
@@ -56,3 +72,9 @@ spec:
       - name: theme
         persistentVolumeClaim:
           claimName: wesago-theme-pvc
+      - name: rsyslog-config
+        configMap:
+          name: rsyslog-django-config
+      - name: rsyslog-logs
+        persistentVolumeClaim:
+          claimName: rsyslog-django-pvc

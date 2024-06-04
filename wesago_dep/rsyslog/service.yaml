@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: rsyslog-server-svc
+  namespace: gic-wesago
+spec:
+  ports:
+  - name: rsyslog-udp
+    port: 514
+    protocol: UDP
+    targetPort: 514
+  - name: rsyslog-tcp
+    port: 514
+    protocol: TCP
+    targetPort: 514
+  selector:
+    app: rsyslog-server
+  type: ClusterIP

@@ -1,18 +1,11 @@
 #!/bin/bash
 
 function apply {
-    echo "storage.yaml"
     kubectl apply -f storage.yaml
-
-    echo "secret.yaml"
-    kubectl apply -f secret.yaml
-
-    echo "configMap.yaml"
     kubectl apply -f configmap.yaml
-
-    echo "deployment.yaml"
     kubectl apply -f deployment.yaml
-
+    kubectl wait --for=condition=available --timeout=600s deployment/rsyslog-server -n gic-wesago
+    kubectl apply -f service.yaml
 }
 
 function delete {

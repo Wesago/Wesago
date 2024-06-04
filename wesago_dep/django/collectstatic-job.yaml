@@ -30,6 +30,8 @@ spec:
               name: avatargallery
             - mountPath: "/app/theme"
               name: theme
+            - mountPath: "/var/log/rsyslog"
+              name: rsyslog-logs
               
       volumes:
         - name: static
@@ -44,6 +46,9 @@ spec:
         - name: theme
           persistentVolumeClaim:
             claimName: wesago-theme-pvc
+        - name: rsyslog-logs
+          persistentVolumeClaim:
+            claimName: rsyslog-django-pvc
 
       restartPolicy: OnFailure
   backoffLimit: 3

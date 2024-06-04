@@ -1,0 +1,158 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rsyslog-server-config
+  namespace: gic-wesago
+data:
+  rsyslog.conf: |
+    module(load="imtcp")
+    input(type="imtcp" port="514")
+
+    module(load="imudp")
+    input(type="imudp" port="514")
+
+    template(name="RedisLogFile" type="string" string="/var/log/rsyslog/redis.log")
+    template(name="SentinelLogFile" type="string" string="/var/log/rsyslog/sentinel.log")
+    template(name="PostgresLogFile" type="string" string="/var/log/rsyslog/postgresql.log")
+    template(name="DjangoLogFile" type="string" string="/var/log/rsyslog/django.log")
+    template(name="CeleryLogFile" type="string" string="/var/log/rsyslog/celery.log")
+
+    if $syslogtag == 'redis' then {
+      action(type="omfile" dynaFile="RedisLogFile")
+      stop
+    }
+
+    if $syslogtag == 'sentinel' then {
+      action(type="omfile" dynaFile="SentinelLogFile")
+      stop
+    }
+
+    if $syslogtag == 'postgres' then {
+      action(type="omfile" dynaFile="PostgresLogFile")
+      stop
+    }
+
+    if $syslogtag == 'django' then {
+      action(type="omfile" dynaFile="DjangoLogFile")
+      stop
+    }
+
+    if $syslogtag == 'celery' then {
+      action(type="omfile" dynaFile="CeleryLogFile")
+      stop
+    }
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rsyslog-redis-config
+  namespace: gic-wesago
+data:
+  rsyslog.conf: |
+    module(load="imfile" mode="polling")
+
+    input(type="imfile"
+          File="/var/log/rsyslog/redis.log"
+          Tag="redis"
+          Severity="info"
+          Facility="local0")
+
+    action(type="omfwd"
+          Target="rsyslog-server-svc"
+          Port="514"
+          Protocol="tcp"
+          Template="RSYSLOG_SyslogProtocol23Format")
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rsyslog-sentinel-config
+  namespace: gic-wesago
+data:
+  rsyslog.conf: |
+    module(load="imfile" mode="polling")
+
+    input(type="imfile"
+          File="/var/log/rsyslog/sentinel.log"
+          Tag="sentinel"
+          Severity="info"
+          Facility="local0")
+
+    action(type="omfwd"
+          Target="rsyslog-server-svc"
+          Port="514"
+          Protocol="tcp"
+          Template="RSYSLOG_SyslogProtocol23Format")
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rsyslog-postgres-config
+  namespace: gic-wesago
+data:
+  rsyslog.conf: |
+    module(load="imfile" mode="polling")
+
+    input(type="imfile"
+          File="/var/log/rsyslog/postgres-*.log"
+          Tag="postgres"
+          Severity="info"
+          Facility="local0")
+
+    action(type="omfwd"
+          Target="rsyslog-server-svc"
+          Port="514"
+          Protocol="tcp"
+          Template="RSYSLOG_SyslogProtocol23Format")
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rsyslog-django-config
+  namespace: gic-wesago
+data:
+  rsyslog.conf: |
+    module(load="imfile" mode="polling")
+
+    input(type="imfile"
+          File="/var/log/rsyslog/django-*.log"
+          Tag="django"
+          Severity="info"
+          Facility="local0")
+
+    action(type="omfwd"
+          Target="rsyslog-server-svc"
+          Port="514"
+          Protocol="tcp"
+          Template="RSYSLOG_SyslogProtocol23Format")
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rsyslog-celery-config
+  namespace: gic-wesago
+data:
+  rsyslog.conf: |
+    module(load="imfile" mode="polling")
+
+    input(type="imfile"
+          File="/var/log/rsyslog/celery-*.log"
+          Tag="celery"
+          Severity="info"
+          Facility="local0")
+
+    action(type="omfwd"
+          Target="rsyslog-server-svc"
+          Port="514"
+          Protocol="tcp"
+          Template="RSYSLOG_SyslogProtocol23Format")

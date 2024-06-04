@@ -24,8 +24,14 @@ spec:
           cp /temp-config/pg_hba.conf /config/pg_hba.conf
           cp /temp-config/postgresql.conf /config/postgresql.conf
           cp /temp-config/pg_ident.conf /config/pg_ident.conf
+
+          # add write permissions to write in the /var/log/rsyslog
+          chmod 777 /var/log/rsyslog
+          echo "log_filename = $(hostname).log" >> /config/postgresql.conf
           
-          mkdir -p /data/archive && chown -R 999:999 /data/archive
+          mkdir -p /data/archive
+          chown -R postgres:postgres /data/archive
+
 
           if [ "$(hostname)" = "postgres-0" ]; then
             #create archive directory
@@ -57,6 +63,9 @@ spec:
           readOnly: false
         - name: temp-config
           mountPath: /temp-config
+          readOnly: false
+        - name: rsyslog-logs
+          mountPath: /var/log/rsyslog
           readOnly: false
 
       containers:
@@ -94,19 +103,51 @@ spec:
         - name: data
           mountPath: /data
           readOnly: false
-      
+        - name: rsyslog-logs
+          mountPath: /var/log/rsyslog
+          readOnly: false
+
+      - name: rsyslog
+        image: registry.deti/gic-wesago/rsyslog-server:v1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 514
+          protocol: UDP
+        - containerPort: 514
+          protocol: TCP
+        resources: {}
+        volumeMounts:
+        - name: rsyslog-config
+          mountPath: /etc/rsyslog.conf
+          subPath: rsyslog.conf
+        - name: rsyslog-logs
+          mountPath: /var/log/rsyslog
+
       volumes:
       - name: config
         emptyDir: {}
       - name: temp-config
         configMap:
           name: postgres
+      - name: rsyslog-config
+        configMap:
+          name: rsyslog-postgres-config
           
   volumeClaimTemplates:
   - metadata:
       name: data
     spec:
       accessModes: [ "ReadWriteOnce" ]
+      storageClassName: longhorn
       resources:
         requests:
           storage: 1Gi
+
+  - metadata:
+      name: rsyslog-logs
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: longhorn
+      resources:
+        requests:
+          storage: 128Mi

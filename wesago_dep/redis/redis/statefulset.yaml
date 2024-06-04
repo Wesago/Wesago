@@ -65,17 +65,50 @@ spec:
           mountPath: /data
         - name: redis-config
           mountPath: /etc/redis/
+        - name: rsyslog-logs
+          mountPath: /var/log/rsyslog
+
+      - name: rsyslog
+        image: registry.deti/gic-wesago/rsyslog-server:v1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 514
+          protocol: UDP
+        - containerPort: 514
+          protocol: TCP
+        resources: {}
+        volumeMounts:
+        - name: rsyslog-config
+          mountPath: /etc/rsyslog.conf
+          subPath: rsyslog.conf
+        - name: rsyslog-logs
+          mountPath: /var/log/rsyslog
+
       volumes:
       - name: redis-config
         emptyDir: {}
       - name: config
         configMap:
           name: redis-config
+      - name: rsyslog-config
+        configMap:
+          name: rsyslog-redis-config
+
   volumeClaimTemplates:
   - metadata:
       name: data
     spec:
       accessModes: [ "ReadWriteOnce" ]
+      storageClassName: longhorn
       resources:
         requests:
           storage: 64Mi
+
+  - metadata:
+      name: rsyslog-logs
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: longhorn
+      resources:
+        requests:
+          storage: 128Mi

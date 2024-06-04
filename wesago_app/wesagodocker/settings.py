@@ -393,48 +393,67 @@ CELERY_WORKER_MAX_TASKS_PER_CHILD = 10
 
 
 # Default logging configuration
-# Logs errors to /logs/wesago.log, rotates them every week
 
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': False,
-#     'formatters': {
-#         'verbose': {
-#             'format': '{levelname} {asctime} {module} {process} {thread} {message}',
-#             'style': '{',
-#         },
-#         'simple': {
-#             'format': '[{asctime}] {levelname} {message}',
-#             'style': '{',
-#         },
-#     },
-#     'handlers': {
-#         'file': {
-#             'level': 'ERROR',
-#             'class': 'logging.handlers.TimedRotatingFileHandler',
-#             'formatter': 'simple',
-#             'filename': os.path.join(BASE_DIR, 'logs', 'wesago.log'),
-#             'when': 'W0', # Rotate logs on mondays
-#         },
-#         'celery': {
-#             'level': 'ERROR',
-#             'class': 'logging.handlers.TimedRotatingFileHandler',
-#             'formatter': 'simple',
-#             'filename': os.path.join(BASE_DIR, 'logs', 'celery.log'),
-#             'when': 'W0', # Rotate logs on mondays
-#         },
-#     },
-#     'loggers': {
-#         'django': {
-#             'handlers': ['file'],
-#             'level': 'INFO',
-#         },
-#         'celery': {
-#             'handlers': ['celery'],
-#             'level': 'INFO',
-#         },
-#     },
-# }
+from pathlib import Path
+
+# logs directory
+log_dir = Path('/var/log/rsyslog')
+
+# setup django log file
+files = [f for f in log_dir.iterdir() if f.is_file() and f.name.startswith('django')]
+files = [int(f.name.split('-')[1].split('.')[0]) for f in files]
+files.sort()
+
+if not files:
+    DJANGO_LOG_FILE = '/var/log/rsyslog/django-1.log'
+else:
+    DJANGO_LOG_FILE = f'/var/log/rsyslog/django-{files[-1] + 1}.log'
+
+# setup celery log file
+files = [f for f in log_dir.iterdir() if f.is_file() and f.name.startswith('celery')]
+files = [int(f.name.split('-')[1].split('.')[0]) for f in files]
+files.sort()
+
+if not files:
+    CELERY_LOG_FILE = '/var/log/rsyslog/celery-1.log'
+else:
+    CELERY_LOG_FILE = f'/var/log/rsyslog/celery-{files[-1] + 1}.log'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'standard': {
+            'format': '[%(levelname)s] %(name)s %(message)s'
+        },
+    },
+    'handlers': {
+        'default': {
+            'level':'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
+            'formatter': 'standard',
+            'filename': DJANGO_LOG_FILE
+        },
+        'celery': {
+            'level':'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
+            'formatter': 'standard',
+            'filename': CELERY_LOG_FILE
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['default'],
+            'level': 'DEBUG',
+            'propagate': True
+        },
+        'celery': {
+            'handlers': ['celery'],
+            'level': 'DEBUG',
+            'propagate': True
+        },
+    },
+}
 
 
 # Wesago specific settings

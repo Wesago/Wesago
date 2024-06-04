@@ -55,3 +55,18 @@ spec:
   resources:
     requests:
       storage: 128Mi
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: rsyslog-django-pvc
+  namespace: gic-wesago
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 128Mi
