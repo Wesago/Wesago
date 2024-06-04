@@ -2,12 +2,13 @@
 
 function apply {
 
-    # configmap
-    kubectl create configmap nginx-website-conf --namespace=gic-wesago --from-file=nginx.conf
-    # deployment
-    kubectl apply -f deployment.yaml
-    # service
-    kubectl apply -f service.yaml
+   # configmap
+   kubectl create configmap nginx-website-conf --namespace=gic-wesago --from-file=nginx.conf
+   # deployment
+   kubectl apply -f deployment.yaml
+   kubectl autoscale deployment nginx-website --namespace=gic-wesago --cpu-percent=70 --min=1 --max=5 
+   # service
+   kubectl apply -f service.yaml
 
 }
 
