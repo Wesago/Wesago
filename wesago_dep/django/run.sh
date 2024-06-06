@@ -17,14 +17,8 @@ function apply {
     kubectl apply -f secret.yaml
     kubectl apply -f configmap.yaml
 
-    kubectl apply -f migration-job.yaml
-    kubectl wait --for=condition=Complete --timeout=200s job/wesago-db-migrations -n gic-wesago 
-
-    kubectl apply -f collectstatic-job.yaml
-    kubectl wait --for=condition=Complete --timeout=200s job/wesago-collectstatic -n gic-wesago 
-
-    kubectl apply -f createsuperuser-job.yaml
-    kubectl wait --for=condition=Complete --timeout=200s job/wesago-createsuperuser -n gic-wesago 
+    kubectl apply -f setup-job.yaml
+    kubectl wait --for=condition=Complete --timeout=300s job/wesago-setup -n gic-wesago 
 
     kubectl apply -f deployment.yaml
     kubectl wait --for=condition=available --timeout=600s deployment/wesago-django -n gic-wesago

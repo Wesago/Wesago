@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: wesago-collectstatic
+  name: wesago-setup
   namespace: gic-wesago
 spec:
   ttlSecondsAfterFinished: 100
@@ -10,9 +10,14 @@ spec:
   template:
     spec:
       containers:
-        - name: collectstatic-container
+        - name: setup-container
           image: registry.deti/gic-wesago/wesago-django:v1
-          command: ['python', 'manage.py', 'collectstatic', '--noinput']
+          command: ["/bin/sh", "-c"]
+          args: 
+            - |
+              python manage.py collectstatic --noinput
+              python manage.py migrate --run-syncdb
+              python manage.py createsuperuser --no-input --username $(DJANGO_SUPERUSER_USERNAME) --email $(DJANGO_SUPERUSER_EMAIL) --password $(DJANGO_SUPERUSER_PASSWORD)
           imagePullPolicy: Always
           envFrom:
           - configMapRef:
