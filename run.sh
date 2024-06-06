@@ -1,6 +1,6 @@
 #!/bin/bash
 
-declare -a arr=("website_dep/" "wesago_dep/")
+declare -a arr=("website_dep/" "wesago_dep/" "monitoring/grafana/")
 
 function apply {
 
