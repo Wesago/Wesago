@@ -1,17 +1,22 @@
 #!/bin/bash
 
 function apply {
-    echo "storage.yaml"
+    kubectl wait -n gic-wesago --for=jsonpath='{.status.phase}'=Running pod/redis-0 --timeout=300s
+    kubectl wait -n gic-wesago --for=jsonpath='{.status.phase}'=Running pod/redis-1 --timeout=300s
+    kubectl wait -n gic-wesago --for=jsonpath='{.status.phase}'=Running pod/redis-2 --timeout=300s
+    kubectl wait -n gic-wesago --for=jsonpath='{.status.phase}'=Running pod/sentinel-0 --timeout=300s
+    kubectl wait -n gic-wesago --for=jsonpath='{.status.phase}'=Running pod/sentinel-1 --timeout=300s
+    kubectl wait -n gic-wesago --for=jsonpath='{.status.phase}'=Running pod/sentinel-2 --timeout=300s
+    kubectl wait -n gic-wesago --for=jsonpath='{.status.phase}'=Running pod/postgres-0 --timeout=300s
+    kubectl wait -n gic-wesago --for=jsonpath='{.status.phase}'=Running pod/postgres-1 --timeout=300s
+    kubectl wait -n gic-wesago --for=jsonpath='{.status.phase}'=Running pod/postgres-2 --timeout=300s
+
     kubectl apply -f storage.yaml
-
-    echo "secret.yaml"
     kubectl apply -f secret.yaml
-
-    echo "configMap.yaml"
     kubectl apply -f configmap.yaml
-
-    echo "deployment.yaml"
     kubectl apply -f deployment.yaml
+
+    kubectl wait --for=condition=available --timeout=600s deployment/wesago-celery -n gic-wesago
 
 }
 

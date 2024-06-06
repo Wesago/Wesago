@@ -1,32 +1,33 @@
 #!/bin/bash
 
 function apply {
+    kubectl wait -n gic-wesago --for=jsonpath='{.status.phase}'=Running pod/redis-0 --timeout=300s
+    kubectl wait -n gic-wesago --for=jsonpath='{.status.phase}'=Running pod/redis-1 --timeout=300s
+    kubectl wait -n gic-wesago --for=jsonpath='{.status.phase}'=Running pod/redis-2 --timeout=300s
+    kubectl wait -n gic-wesago --for=jsonpath='{.status.phase}'=Running pod/sentinel-0 --timeout=300s
+    kubectl wait -n gic-wesago --for=jsonpath='{.status.phase}'=Running pod/sentinel-1 --timeout=300s
+    kubectl wait -n gic-wesago --for=jsonpath='{.status.phase}'=Running pod/sentinel-2 --timeout=300s
+    kubectl wait -n gic-wesago --for=jsonpath='{.status.phase}'=Running pod/postgres-0 --timeout=300s
+    kubectl wait -n gic-wesago --for=jsonpath='{.status.phase}'=Running pod/postgres-1 --timeout=300s
+    kubectl wait -n gic-wesago --for=jsonpath='{.status.phase}'=Running pod/postgres-2 --timeout=300s
+
     echo "storage.yaml"
     kubectl apply -f storage.yaml
     sleep 5
-
-    echo "secret.yaml"
     kubectl apply -f secret.yaml
-
-    echo "configMap.yaml"
     kubectl apply -f configmap.yaml
 
-    echo "migration-job.yaml"
     kubectl apply -f migration-job.yaml
     kubectl wait --for=condition=Complete --timeout=200s job/wesago-db-migrations -n gic-wesago 
 
-    echo "collectstatic-job.yaml"
     kubectl apply -f collectstatic-job.yaml
     kubectl wait --for=condition=Complete --timeout=200s job/wesago-collectstatic -n gic-wesago 
 
-    echo "createsuperuser-job.yaml"
     kubectl apply -f createsuperuser-job.yaml
     kubectl wait --for=condition=Complete --timeout=200s job/wesago-createsuperuser -n gic-wesago 
 
-    echo "deployment.yaml"
     kubectl apply -f deployment.yaml
-
-    echo "service.yaml"
+    kubectl wait --for=condition=available --timeout=600s deployment/wesago-django -n gic-wesago
     kubectl apply -f service.yaml
 }
 
