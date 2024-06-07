@@ -75,6 +75,13 @@ spec:
         ports:
         - containerPort: 5432
           name: database
+        livenessProbe:
+          exec:
+            command: ["psql", "-w", "-U", "postgres", "-d", "postgres", "-c", "SELECT 1"]
+          initialDelaySeconds: 120     # Time to wait before starting the first probe after the container starts
+          periodSeconds: 10           # Time between each probe
+          timeoutSeconds: 5           # Time to wait for a probe response
+          failureThreshold: 2         # Minimum consecutive failures for the probe to be considered failed
         env:
         - name: PGDATA
           value: "/data/pgdata"

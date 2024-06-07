@@ -16,6 +16,7 @@ data:
     template(name="PostgresLogFile" type="string" string="/var/log/rsyslog/postgresql.log")
     template(name="DjangoLogFile" type="string" string="/var/log/rsyslog/django.log")
     template(name="CeleryLogFile" type="string" string="/var/log/rsyslog/celery.log")
+    template(name="healthcheckLogFile" type="string" string="/var/log/rsyslog/healthcheck.log")
 
     if $syslogtag == 'redis' then {
       action(type="omfile" dynaFile="RedisLogFile")
@@ -39,6 +40,11 @@ data:
 
     if $syslogtag == 'celery' then {
       action(type="omfile" dynaFile="CeleryLogFile")
+      stop
+    }
+
+    if $syslogtag == 'healthcheck' then {
+      action(type="omfile" dynaFile="healthcheckLogFile")
       stop
     }
 
@@ -148,6 +154,29 @@ data:
     input(type="imfile"
           File="/var/log/rsyslog/celery-*.log"
           Tag="celery"
+          Severity="info"
+          Facility="local0")
+
+    action(type="omfwd"
+          Target="rsyslog-server-svc"
+          Port="514"
+          Protocol="tcp"
+          Template="RSYSLOG_SyslogProtocol23Format")
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rsyslog-healthcheck-config
+  namespace: gic-wesago
+data:
+  rsyslog.conf: |
+    module(load="imfile" mode="polling")
+
+    input(type="imfile"
+          File="/var/log/rsyslog/healthcheck.log"
+          Tag="healthcheck"
           Severity="info"
           Facility="local0")
 

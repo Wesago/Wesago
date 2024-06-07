@@ -57,6 +57,13 @@ spec:
         image: registry.deti/gic-wesago/redis:v1
         command: ["redis-server"]
         args: ["/etc/redis/redis.conf"]
+        livenessProbe:
+          exec:
+            command: ["redis-cli", "ping"]
+          initialDelaySeconds: 120     # Time to wait before starting the first probe after the container starts
+          periodSeconds: 10           # Time between each probe
+          timeoutSeconds: 5           # Time to wait for a probe response
+          failureThreshold: 2         # Minimum consecutive failures for the probe to be considered failed
         ports:
         - containerPort: 6379
           name: redis
