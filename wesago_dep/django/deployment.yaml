@@ -4,7 +4,7 @@ metadata:
   name: wesago-django
   namespace: gic-wesago
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: wesago-django
@@ -21,11 +21,11 @@ spec:
         - containerPort: 8000
         resources:
           requests:
-            memory: "32Mi"
+            memory: "128Mi"
             cpu: "250m"
           limits:
-            memory: "128Mi"
-            cpu: "500m"
+            memory: "512Mi"
+            cpu: "1000m"
         envFrom:
         - configMapRef:
             name: wesago-cm
@@ -78,3 +78,10 @@ spec:
       - name: rsyslog-logs
         persistentVolumeClaim:
           claimName: rsyslog-django-pvc
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - topologyKey: kubernetes.io/hostname
+            labelSelector:
+              matchLabels:
+                app: wesago-django

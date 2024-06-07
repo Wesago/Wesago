@@ -16,10 +16,8 @@ spec:
       containers:
         - name: nginx-wesago
           image: registry.deti/gic-wesago/nginx:v1
-
           ports:
             - containerPort: 80
-
           resources:
             requests:
               memory: "32Mi"
@@ -27,7 +25,6 @@ spec:
             limits:
               memory: "128Mi"
               cpu: "500m"
-
           volumeMounts:
             - name: static
               mountPath: /app/static
@@ -37,7 +34,6 @@ spec:
               mountPath: /etc/nginx/nginx.conf
               subPath: nginx.conf
               readOnly: true
-
       volumes:
         - name: static
           persistentVolumeClaim:
@@ -51,3 +47,10 @@ spec:
             items:
                - key: nginx.conf
                  path: nginx.conf
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - topologyKey: kubernetes.io/hostname
+            labelSelector:
+              matchLabels:
+                app: nginx-wesago

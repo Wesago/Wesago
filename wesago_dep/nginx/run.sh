@@ -6,6 +6,7 @@ function apply {
     sleep 5
 
     kubectl apply -f deployment.yaml
+    kubectl autoscale deployment nginx-wesago --namespace=gic-wesago --cpu-percent=70 --min=2 --max=5 
     kubectl apply -f service.yaml
     kubectl apply -f ingress.yaml
 }
