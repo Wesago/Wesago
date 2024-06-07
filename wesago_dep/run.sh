@@ -1,6 +1,7 @@
 #!/bin/bash
 
-declare -a arr=("rsyslog" "redis" "postgres" "django" "celery" "nginx")
+declare -a arr=("rsyslog" "redis" "postgres" "django" "celery" "nginx" "healthcheck")
+len=${#arr[@]}
 
 function apply {
 
@@ -16,10 +17,11 @@ function apply {
 
 function delete {
 
-   for i in "${arr[@]}"
+   # Loop through the array in reverse order
+   for (( i=$len-1; i>=0; i-- ))
    do
-      echo "Running $i"
-      cd $i
+      echo "Running ${arr[i]}"
+      cd "${arr[i]}"
       bash run.sh delete
       cd ..
    done

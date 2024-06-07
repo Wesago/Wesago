@@ -5,6 +5,7 @@ function apply {
     kubectl apply -f configmap-dashboards.yaml
     kubectl apply -f deployment.yaml
     kubectl apply -f service.yaml
+    kubectl apply -f ingress.yaml
 }
 
 function delete {

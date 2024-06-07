@@ -11,11 +11,11 @@ function apply {
 
 function delete {
 
-    # pvc
-    kubectl delete -f pvc.yaml
     # job
     kubectl delete -f job.yaml
 
+    # pvc
+    kubectl delete -f pvc.yaml
 }
 
 if [ "$1" == "apply" ]; then

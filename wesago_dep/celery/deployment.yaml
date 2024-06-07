@@ -4,7 +4,7 @@ metadata:
   name: wesago-celery
   namespace: gic-wesago
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: wesago-celery

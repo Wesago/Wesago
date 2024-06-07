@@ -28,6 +28,10 @@ docker push registry.deti/${NAMESPACE}/redis:v1
 docker build -t registry.deti/${NAMESPACE}/rsyslog-server:v1 -f wesago_dep/rsyslog/Dockerfile wesago_dep/rsyslog
 docker push registry.deti/${NAMESPACE}/rsyslog-server:v1
 
+# monitor_dep healthcheck
+docker build -t registry.deti/${NAMESPACE}/health-checker:v1 -f wesago_dep/healthcheck/Dockerfile wesago_dep/healthcheck
+docker push registry.deti/${NAMESPACE}/health-checker:v1
+
 # monitor_dep grafana
 docker build -t registry.deti/${NAMESPACE}/grafana:v1 -f monitoring/grafana/Dockerfile monitoring/grafana
 docker push registry.deti/${NAMESPACE}/grafana:v1

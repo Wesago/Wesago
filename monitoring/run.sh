@@ -1,6 +1,6 @@
 #!/bin/bash
 
-declare -a arr=("react" "nginx")
+declare -a arr=("grafana")
 len=${#arr[@]}
 
 function apply {
@@ -29,9 +29,7 @@ function delete {
 
 if [ "$1" == "apply" ]; then
    apply
-   kubectl apply -f ingress.yaml
 elif [ "$1" == "delete" ]; then
-   kubectl delete -f ingress.yaml
    delete
 else
    echo "Invalid argument. Please provide 'apply' or 'delete'."

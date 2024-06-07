@@ -30,7 +30,7 @@ spec:
           httpGet:
             path: /
             port: 8000
-          initialDelaySeconds: 20     # Time to wait before starting the first probe after the container starts
+          initialDelaySeconds: 60     # Time to wait before starting the first probe after the container starts
           periodSeconds: 10           # Time between each probe
           timeoutSeconds: 5           # Time to wait for a probe response
           # successThreshold: 1       # Minimum consecutive successes for the probe to be considered successful
